@@ -1,0 +1,15 @@
+{
+  "name": "ebrc-workspaces",
+  "version": "0.1.0",
+  "author": "ebrc",
+  "summary": "Manage ebrc workspaces configuration",
+  "license": "Apache-2.0",
+  "source": "https://github.com/EuPathDB/puppet-workspaces",
+  "project_page": "https://github.com/EuPathDB/puppet-workspaces",
+  "issues_url": "https://github.com/EuPathDB/puppet-workspaces/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ],
+  "data_provider": null
+}
+
