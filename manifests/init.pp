@@ -1,48 +1,77 @@
 # Class: workspaces
 # ===========================
 #
-# Full description of class workspaces here.
+# The workspaces class handles all of the setup of workspace components that
+# aren't irods or jenkins.  These are mainly helper scripts in svn, their
+# requirements, and configuration.
 #
 # Parameters
 # ----------
 #
-# Document parameters here.
 #
-# * `sample parameter`
-# Explanation of what this parameter affects and what it defaults to.
-# e.g. "Specify one or more upstream ntp servers as an array."
+# * `wrkspuser` 
 #
-# Variables
-# ----------
+# The workspaces jenkins user
 #
-# Here you should define a list of variables that this module would require.
+# * `wrksptoken`
 #
-# * `sample variable`
-#  Explanation of how this variable affects the function of this class and if
-#  it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#  External Node Classifier as a comma separated list of hostnames." (Note,
-#  global variables should be avoided in favor of class parameters as
-#  of Puppet 2.6.)
+# The token used by the jenkins api for the workspaces user
 #
-# Examples
-# --------
+# * `checkout_location`
 #
-# @example
-#    class { 'workspaces':
-#      servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
-#    }
+# The path to where the svn repository is checked out
 #
-# Authors
-# -------
+# * `checkout_revision`
 #
-# Author Name <author@domain.com>
+# The revision to be checked out
 #
-# Copyright
-# ---------
-#
-# Copyright 2017 Your name here, unless otherwise noted.
-#
-class workspaces {
 
+class workspaces (
+
+  $wrkspuser     = $::workspaces::params::wrkspuser, 
+  $wrksptoken    = $::workspaces::params::wrksptoken,
+
+  $checkout_location = $::workspaces::params::checkout_location,
+  $checkout_revision = $::workspaces::params::checkout_revision,
+  
+) inherits workspaces::params {
+
+  # TODO put in packages.pp?
+  # these packages are needed for irods helper scripts
+  package { 'python-irodsclient':
+    ensure   => installed,
+    provider => 'pip',
+  }
+  package { 'python-jenkins':
+    ensure => installed,
+  }
+
+  # generate template used by irods job runner (executeJobFile.py)
+  file { '/var/lib/irods/jenkins.conf':
+    ensure  => 'file',
+    content => template('workspaces/jenkins.conf.erb'),
+    require => Class['irods::provider'],
+  }
+
+  vcsrepo { $checkout_location:
+    ensure        => present,
+    provider      => svn,
+    source        => 'https://cbilsvn.pmacs.upenn.edu/svn/apidb/EuPathDBIrods/trunk',
+    revision      => $checkout_revision,
+  }
+
+  # create links to individual files in svn checkout
+  $msi_bin = '/var/lib/irods/msiExecCmd_bin'
+  $link_defaults = { ensure => 'link', require => Class[irods::provider] }
+  $links = {
+    "$msi_bin/eventGenerator.py"                         => { target => "$checkout_location/Scripts/remoteExec/eventGenerator.py" },
+    "$msi_bin/executeJobFile.py"                         => { target => "$checkout_location/Scripts/remoteExec/executeJobFile.py" },
+    "/etc/irods/ud.re"                                   => { target => "$checkout_location/Scripts/ud.re" },
+  }
+
+  create_resources(file, $links, $link_defaults)
 
 }
+
+
+

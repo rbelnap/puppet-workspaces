@@ -1,0 +1,54 @@
+println("Processing config options...")
+
+// workspace jobs config
+node = 'irods'
+workspace = '/var/tmp/jenkins-irods'
+projects = ['PlasmoDB', 'ToxoDB']
+remoteJobToken = 'eupathdbirods'
+builderJob = 'irods-builder'
+listenerJob = 'irods-listener'
+handlerJobPrefix = 'irods-handler-'
+datasetStoreId = "DATASET_STORE_ID"
+emailRecipient = 'criswlawrence@gmail.com'
+sender = 'crisl@upenn.edu'
+environment = '<%= @site_environment %>'
+confset = '<%= @confset %>'
+
+staticUsers = [
+<% @static_users.each do |user| %>
+    [
+    "user": "<%= user['user'] -%>",
+    "pass": "<%= user['pass'] -%>",
+    ],
+<% end %>
+]
+
+
+labelNodes = [
+<% @nodes.each do |node| %>
+    "<%= node['label'] -%>",
+<% end -%>
+]
+
+wrkspuser = '<%= @wrkspuser %>'
+
+adminusers = [
+<% @adminusers.each do |user| %>
+    "<%= user -%>",
+<% end -%>
+]
+
+plugins = [
+<%= @plugins.map{ |plugin| "'#{plugin}'"}.join(",\n  ") %>
+]
+
+nodeList = [
+<% @nodes.each do |node| %>
+    [
+    "name": "<%= node['name'] -%>",
+    "host": "<%= node['host'] -%>",
+    "label": "<%= node['label'] -%>",
+    ],
+<% end %>
+]
+println("...Config options processed")
