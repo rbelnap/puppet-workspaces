@@ -11,6 +11,17 @@ class workspaces::jenkins::params {
   $instance_home      = "/usr/local/home/jenkins/Instances/WS"
   $static_users       = undef #TODO empty list? default mapping?
 
+  #ldap options should be specified in hiera
+  $use_ldap             = false
+  $ldap_server          = undef
+  $ldap_rootDN          = undef
+  $ldap_userSearchBase  = undef
+  $ldap_userSearch      = undef
+  $ldap_groupSearchBase = undef
+  $ldap_managerDN       = undef
+  $ldap_managerPassword = undef
+
+
   $plugins = [
     'antisamy-markup-formatter',
     'ant',

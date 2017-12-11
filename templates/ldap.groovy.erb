@@ -1,0 +1,30 @@
+import jenkins.model.*
+import hudson.security.*
+import org.jenkinsci.plugins.*
+import jenkins.security.plugins.ldap.*
+import hudson.util.Secret
+
+def config = new ConfigSlurper().parse(new File('<%= @dslconfig -%>').toURL())
+
+SecurityRealm ldap_realm = new LDAPSecurityRealm(        //public LDAPSecurityRealm(
+    config.ldap_server,                                  //  String server,
+    config.ldap_rootDN,                                  //  String rootDN,
+    config.ldap_userSearchBase,                          //  String userSearchBase,
+    config.ldap_userSearch,                              //  String userSearch,
+    config.ldap_groupSearchBase,                         //  String groupSearchBase,
+    '',                                                  //  String groupSearchFilter,
+    new FromGroupSearchLDAPGroupMembershipStrategy(''),  //  LDAPGroupMembershipStrategy groupMembershipStrategy,
+    config.ldap_managerDN,                               //  String managerDN,
+    Secret.fromString(config.ldap_managerPassword),      //  hudson.util.Secret managerPasswordSecret,
+    false,                                               //  boolean inhibitInferRootDN,
+    false,                                               //  boolean disableMailAddressResolver,
+    null,                                                //  LDAPSecurityRealm.CacheConfiguration cache,
+    null,                                                //  LDAPSecurityRealm.EnvironmentProperty[] environmentProperties,
+    'displayname',                                       //  String displayNameAttributeName,
+    'mail',                                              //  String mailAddressAttributeName,
+    IdStrategy.CASE_INSENSITIVE,                         //  jenkins.model.IdStrategy userIdStrategy,
+    IdStrategy.CASE_INSENSITIVE                          //  jenkins.model.IdStrategy groupIdStrategy)
+    ) 
+
+Jenkins.instance.setSecurityRealm(ldap_realm)
+Jenkins.instance.save()

@@ -28,7 +28,7 @@ jlc.save()
 def hudsonRealm = new HudsonPrivateSecurityRealm(false)
 
 config.staticUsers.each {
-  hudsonRealm.createAccount(it.user, it.password) 
+  hudsonRealm.createAccount(it.user, it.pass) 
   instance.setSecurityRealm(hudsonRealm)
   instance.save()
 }

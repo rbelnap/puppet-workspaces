@@ -8,9 +8,38 @@
 #
 # Document parameters here.
 #
-# * `sample parameter`
-# Explanation of what this parameter affects and what it defaults to.
-# e.g. "Specify one or more upstream ntp servers as an array."
+# * `dslconfig`
+# path to the dslconfig file, used to configure jenkins groovy scripts
+# 
+# * `wrkspuser`
+# the username of the workspaces jenkins user - defaults to 'wrkspuser'
+#
+# * `nodes`
+# a list of jekins nodes to configure.  This is an array of name, host, 
+# label.
+#
+# * `adminusers`
+# a list of users that should have admin privileges.
+#
+# * `site_environment`
+# the environment used by jenkins jobs to configure projects.  This is 
+# currently only going to be savm, production, but could include qa
+#
+# * `confset`
+# the name of the confset file in svn used to configure what projects
+# run N/S and on what databases
+#
+# * `instance_home`
+# The path to the jenkins instance home.  defaults to 
+# /usr/local/home/jenkins/Instances/WS/dslconfig.groovy
+#
+# * `static_users`
+# users to configure statically, if not using ldap.  It is an array of
+# user,pass
+#
+# * `plugins`
+# a list of jenkins plugins to install
+#
 #
 # Variables
 # ----------
@@ -44,10 +73,20 @@ class workspaces::jenkins (
   $instance_home       = $::workspaces::jenkins::params::instance_home,
   $static_users        = $::workspaces::jenkins::params::static_users,
   $plugins             = $::workspaces::jenkins::params::plugins,
+
+  $use_ldap             = $::workspaces::jenkins::params::use_ldap,
+  $ldap_server          = $::workspaces::jenkins::params::ldap_server,
+  $ldap_rootDN          = $::workspaces::jenkins::params::ldap_rootDN,
+  $ldap_userSearchBase  = $::workspaces::jenkins::params::ldap_userSearchBase,
+  $ldap_userSearch      = $::workspaces::jenkins::params::ldap_userSearch,
+  $ldap_groupSearchBase = $::workspaces::jenkins::params::ldap_groupSearchBase,
+  $ldap_managerDN       = $::workspaces::jenkins::params::ldap_managerDN,
+  $ldap_managerPassword = $::workspaces::jenkins::params::ldap_managerPassword,
+
   
 ) inherits workspaces::jenkins::params {
 
-# TODO this is only applicable to savm
+# TODO this is only applicable to savm, should be in profile
 #  Class['::workspaces'] ->
 #  Class['::workspaces::jenkins']
 
@@ -117,6 +156,21 @@ class workspaces::jenkins (
     mode    => '0600'
   }
 
+  # ldap config
+  if $use_ldap {
+    $ldap_ensure = 'file'
+  }
+  else {
+    $ldap_ensure = 'absent'
+  }
+
+  file { "${init_groovy}/15_ldap.groovy":
+    ensure  => $ldap_ensure,
+    content => template('workspaces/ldap.groovy.erb'),
+    notify  => Service['jenkins@WS'],
+    owner   => 'jenkins',
+    mode    => '0600'
+  }
 
   # because this vm instance will dynamically generate the api token, the
   # 12_api_token.groovy script creates a file in jenkin's home with the

@@ -51,4 +51,15 @@ nodeList = [
     ],
 <% end %>
 ]
+
+ldap_server = '<%= @ldap_server %>'
+ldap_rootDN = '<%= @ldap_rootDN %>'
+ldap_userSearchBase = '<%= @ldap_userSearchBase %>'
+ldap_userSearch = '<%= @ldap_userSearch %>'
+ldap_groupSearchBase = '<%= @ldap_gropuSearchBase %>'
+ldap_groupSearchFilter = ''
+
+ldap_managerDN = '<%= @ldap_managerDN %>'
+ldap_managerPassword = '<%= @ldap_managerPassword %>'
+
 println("...Config options processed")
