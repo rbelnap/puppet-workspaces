@@ -87,27 +87,12 @@ class workspaces::jenkins (
   
 ) inherits workspaces::jenkins::params {
 
-# TODO this is only applicable to savm, should be in profile
-#  Class['::workspaces'] ->
-#  Class['::workspaces::jenkins']
-
   $init_groovy = "${instance_home}/init.groovy.d"
 
   # this handles user and plugin setup
   file { "${init_groovy}/10_init.groovy":
     ensure  => 'file',
     content => template('workspaces/init.groovy.erb'),
-    notify  => Service['jenkins@WS'],
-    owner   => 'jenkins',
-    mode    => '0600'
-  }
-
-  # this creates /usr/local/home/jenkins/jenkins_token.txt, which is linked
-  # to /etc/facter/facts.d/ to provide this token as a fact to be used
-  # elsewhere
-  file { "${init_groovy}/12_token.groovy":
-    ensure  => 'file',
-    content => template('workspaces/token.groovy.erb'),
     notify  => Service['jenkins@WS'],
     owner   => 'jenkins',
     mode    => '0600'
@@ -173,20 +158,30 @@ class workspaces::jenkins (
     mode    => '0600'
   }
 
-  # because this vm instance will dynamically generate the api token, the
-  # 12_api_token.groovy script creates a file in jenkin's home with the
-  # credentials.  we link it into facts.d here so that it can be used in puppet
-  # elsewhere.  In a production scenario, we would likely set the token in
-  # hiera directly.
+  if $environment == "savm" {
+    # The below script creates /usr/local/home/jenkins/jenkins_token.txt, which
+    # is then linked to /etc/facter/facts.d/ to provide this token as a fact.
+    # In a production scenario, the token is static and set in hiera directly
+    # (as $::workspaces::jenkins::wrksptoken)
 
-  file { ['/etc/facter', '/etc/facter/facts.d']:
-    ensure => directory,
-  }
 
-  file { '/etc/facter/facts.d/jenkins_token.txt':
-    ensure => link,
-    target => '/usr/local/home/jenkins/jenkins_token.txt',
-    mode   => '700',
+    file { "${init_groovy}/12_token.groovy":
+      ensure  => 'file',
+      content => template('workspaces/token.groovy.erb'),
+      notify  => Service['jenkins@WS'],
+      owner   => 'jenkins',
+      mode    => '0600'
+    }
+
+    file { ['/etc/facter', '/etc/facter/facts.d']:
+      ensure => directory,
+    }
+
+    file { '/etc/facter/facts.d/jenkins_token.txt':
+      ensure => link,
+      target => '/usr/local/home/jenkins/jenkins_token.txt',
+      mode   => '700',
+    }
   }
 
 }
