@@ -11,11 +11,12 @@
 #
 # * `wrkspuser` 
 #
-# The workspaces jenkins user
+# The workspaces jenkins user - is looked up from hiera 
 #
 # * `wrksptoken`
 #
-# The token used by the jenkins api for the workspaces user
+# The token used by the jenkins api for the workspaces user - is looked up from
+# hiera, defaults to the wrkspuser_token fact
 #
 # * `checkout_location`
 #
@@ -23,7 +24,7 @@
 #
 # * `checkout_revision`
 #
-# The revision to be checked out
+# The revision to be checked out, defaults to HEAD
 #
 
 class workspaces (

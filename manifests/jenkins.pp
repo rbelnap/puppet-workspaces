@@ -11,6 +11,9 @@
 # * `dslconfig`
 # path to the dslconfig file, used to configure jenkins groovy scripts
 # 
+# * `url`
+# full url of the jenkins installation
+#
 # * `wrkspuser`
 # the username of the workspaces jenkins user - defaults to 'wrkspuser'
 #
@@ -31,36 +34,36 @@
 #
 # * `instance_home`
 # The path to the jenkins instance home.  defaults to 
-# /usr/local/home/jenkins/Instances/WS/dslconfig.groovy
+# /usr/local/home/jenkins/Instances/WS
 #
 # * `static_users`
 # users to configure statically, if not using ldap.  It is an array of
-# user,pass
+# user,pass.  defaults to an empty list, which will configure no users
 #
 # * `plugins`
 # a list of jenkins plugins to install
 #
+# * `use_ldap`
+# boolean that configures if ldap is used for login or not.  If true,
+# the rest of the ldap_* parameters need to be specified.
+#
+# ldap_* options should be self explanatory:
+# * `ldap_server`
+# * `ldap_rootDN`
+# * `ldap_userSearchBase`
+# * `ldap_userSearch`
+# * `ldap_groupSearchBase`
+# * `ldap_managerDN`
+# * `ldap_managerPassword`
+
 #
 # Variables
 # ----------
 #
-# Here you should define a list of variables that this module would require.
-#
-# * `sample variable`
-#  Explanation of how this variable affects the function of this class and if
-#  it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#  External Node Classifier as a comma separated list of hostnames." (Note,
-#  global variables should be avoided in favor of class parameters as
-#  of Puppet 2.6.)
-#
 # Examples
 # --------
 #
-# @example
-#    class { 'workspaces':
-#      servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
-#    }
-#
+# include workspaces::jenkins
 
 class workspaces::jenkins ( 
 
