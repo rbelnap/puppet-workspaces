@@ -10,7 +10,7 @@ class workspaces::jenkins::params {
   $site_environment   = "savm"
   $confset            = "wij_configuration_set"
   $instance_home      = "/usr/local/home/jenkins/Instances/WS"
-  $static_users       = undef #TODO empty list? default mapping?
+  $static_users       = []
 
   #ldap options should be specified in hiera
   $use_ldap             = false

@@ -24,14 +24,18 @@ jlc.save()
 
 /** AUTHENTICATION **/
 
-// create users
-def hudsonRealm = new HudsonPrivateSecurityRealm(false)
+// create static users
+if (config.staticUsers) {
+println "creating static users"
+  def hudsonRealm = new HudsonPrivateSecurityRealm(false)
 
-config.staticUsers.each {
-  hudsonRealm.createAccount(it.user, it.pass) 
-  instance.setSecurityRealm(hudsonRealm)
-  instance.save()
+  config.staticUsers.each {
+    hudsonRealm.createAccount(it.user, it.pass)
+    instance.setSecurityRealm(hudsonRealm)
+    instance.save()
+    }
 }
+
 
 def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
 instance.setAuthorizationStrategy(strategy)
