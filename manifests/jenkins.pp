@@ -65,6 +65,7 @@
 class workspaces::jenkins ( 
 
   $dslconfig           = $::workspaces::jenkins::params::dslconfig,
+  $url                 = $::workspaces::jenkins::params::url,
   $wrkspuser           = $::workspaces::jenkins::params::wrkspuser,
   $nodes               = $::workspaces::jenkins::params::nodes,
   $adminusers          = $::workspaces::jenkins::params::adminusers,

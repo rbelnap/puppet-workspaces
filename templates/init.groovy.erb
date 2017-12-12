@@ -19,7 +19,7 @@ file.write "2.0"
 
 // set site jenkins_url (see https://issues.jenkins-ci.org/browse/JENKINS-28466)
 def jlc = JenkinsLocationConfiguration.get()
-jlc.setUrl("http://wij.vm:9171/")
+jlc.setUrl(config.url)
 jlc.save()
 
 /** AUTHENTICATION **/

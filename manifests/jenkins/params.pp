@@ -1,11 +1,12 @@
 # This class manages workspaces(WS) specific jenkins configurations
 
 class workspaces::jenkins::params {
-  $wrkspuser          = "wrkspuser"  #$::workspaces::params::wrkspuser     #lookup({"name" => "workspaces::jenkins::wrkspuser"})
-  $wrksptoken         = $::wrkspuser_token #$::workspaces::params::wrksptoken    #lookup({"name" => "workspaces::jenkins::wrksptoken", "default_value" => $::wrkspuser_token}) # default to wrkspuser_token fact
+  $wrkspuser          = "wrkspuser"
+  $url                = "http://localhost"
+  $wrksptoken         = $::wrkspuser_token
   $dslconfig          = "/usr/local/home/jenkins/Instances/WS/dslconfig.groovy"
-  $nodes              = undef # lookup({"name" => "workspaces::jenkins::nodes"})
-  $adminusers         = undef # lookup({"name" => "workspaces::jenkins::adminusers"})
+  $nodes              = undef
+  $adminusers         = undef
   $site_environment   = "savm"
   $confset            = "wij_configuration_set"
   $instance_home      = "/usr/local/home/jenkins/Instances/WS"

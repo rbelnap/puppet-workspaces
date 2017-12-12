@@ -30,6 +30,7 @@ class workspaces (
 
   $wrkspuser     = $::workspaces::params::wrkspuser, 
   $wrksptoken    = $::workspaces::params::wrksptoken,
+  $wrkspurl      = $::workspaces::params::wrkspurl,
 
   $checkout_location = $::workspaces::params::checkout_location,
   $checkout_revision = $::workspaces::params::checkout_revision,
